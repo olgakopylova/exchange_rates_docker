@@ -1,0 +1,44 @@
+version: "3"
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+services:
+
+  web:
+    build: web/
+
+    volumes:
+      - B:/OpenServer/domains/localhost/exchange_rates/:/var/www/html
+
+    ports:
+      - "8080:80"
+      - "8022:22"
+
+    networks:
+      - frontend
+      - backend
+
+    restart: always
+
+    depends_on:
+      - db
+
+  db:
+    image: mysql
+
+    command: --default-authentication-plugin=mysql_native_password
+
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+
+    ports:
+      - "8306:3306"
+
+    networks:
+      - backend
